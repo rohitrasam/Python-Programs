@@ -1,0 +1,12 @@
+__pycache__
+
+.idea
+venv
+*.png
+*.ppm
+*.jpg
+*.jfif
+Images
+cards
+*.pdf
+.ipynb_checkpoints
