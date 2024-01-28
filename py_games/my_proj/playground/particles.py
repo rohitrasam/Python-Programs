@@ -6,35 +6,42 @@ import math
 WIDTH = 1000
 HEIGHT = 720
 
-VEL = 2
+VEL = -4
 
 class Particles:
 
     """
-    Change gravity, y-vel, radius, x-direction and angle movemnt to see different effects
+    Change gravity, vel, radius, x-direction and angle movemnt to see different effects
     """
 
-    def __init__(self, radius) -> None:
+    def __init__(self, radius, color) -> None:
         self.pos = list(pg.mouse.get_pos())
         self.radius = radius
         self.grav = 0.3
-        self.vel = [randint(0, 20)/10 -1, -7]
+        self.color = color
+        self.angle = 2*math.pi*random() # angle remains constant for the rest of the particle's life 
+        self.vel = [randint(0, 60)/10 - 3, VEL]
+        # self.vel = randint(-6, 3)
 
 
     def draw(self):
-        pg.draw.circle(display, (0, 127, 250), self.pos, self.radius)
+        # pg.draw.circle(display, (0, 127, 250), self.pos, self.radius, 3)
+        pg.draw.circle(display, self.color, self.pos, self.radius)
 
     def update(self):
-
+        
+        angle = math.pi*random() # angle changes every frame
+        self.pos[0] += self.vel[0]
         self.pos[1] += self.vel[1]
+        # self.pos[1] += math.cos(angle)+self.vel[1]
+        # self.pos[1] += self.vel
 
-        angle = 3*random()
-        self.pos[0] += math.cos(angle)*self.radius 
-        # self.pos[0] += self.vel[0]
+        # self.pos[0] -= math.cos(angle)*self.radius
+        # self.pos[0] += math.cos(self.angle)*self.radius
+        # self.vel[1] += self.grav
         self.radius -= 0.1
         if self.radius <= 0:
             particles.remove(self)
-        # self.vel[1] += self.grav
         self.draw()
 
 
@@ -56,7 +63,8 @@ if __name__ == '__main__':
 
     while True:
         
-        display.fill((20, 20, 20))
+        # display.fill((100, 100, 100))
+        display.fill((0, 0, 0))
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
@@ -64,9 +72,13 @@ if __name__ == '__main__':
             if event.type == pg.MOUSEBUTTONDOWN:
                 start = not start
 
-        print(len(particles))
         if start:
-            particles.append(Particles(randint(4, 8)))
+            # particles.append(Particles(randint(8, 15), (255, 128, 0)))
+            # particles.append(Particles(randint(8, 15), (255, 250, 0)))
+            particles.append(Particles(randint(5, 10), (150, 150, 150)))
+            particles.append(Particles(randint(5, 10), (200, 200, 200)))
+            particles.append(Particles(randint(5, 10), (100, 100, 100)))
+            # particles.append(Particles(randint(8, 15), (13, 0, 26)))
 
         render_particles()
 
