@@ -4,7 +4,7 @@ from sys import exit
 from random import random, randint
 import os
 from entities.enemy import Enemy
-from scripts.conts import *
+from scripts.consts import *
 
 class Game:
 

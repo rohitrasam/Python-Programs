@@ -27,7 +27,7 @@ class Sparks:
 
     def update(self):
         self.pos += array([math.cos(self.angle)*self.vel, math.sin(self.angle)*self.vel])
-        self.angle += 0.1
+        # self.angle += 0.1
         self.vel -= 0.1
         if self.vel <= 0:
             self.alive = False

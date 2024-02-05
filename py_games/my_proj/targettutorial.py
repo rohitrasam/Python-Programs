@@ -9,7 +9,7 @@ class Crosshair():
         self.surf = pg.Surface((5, 5))
         self.surf.fill((250, 0, 0))
         self.rect = self.surf.get_rect(center=(WIDTH/2, HEIGHT/2))
-        self.gunshot = pg.mixer.Sound("gameTut\data\sfx\shoot.wav")
+        self.gunshot = pg.mixer.Sound("D:\Python Programs\py_games\gameTut\data\sfx\shoot.wav")
 
     def shoot(self):
         self.gunshot.play()
@@ -52,7 +52,7 @@ pg.init()
 pg.mouse.set_visible(False)
 clock = pg.time.Clock()
 screen = pg.display.set_mode((WIDTH, HEIGHT))
-bg = pg.image.load("gameTut\data\images\\background.png")
+bg = pg.image.load("py_games\gameTut\data\images\\background.png")
 
 crosshair = Crosshair()
 
@@ -65,7 +65,6 @@ for target in range(1, 41):
 
 
 while True:
-
     for event in pg.event.get():
 
         if event.type == pg.QUIT:
