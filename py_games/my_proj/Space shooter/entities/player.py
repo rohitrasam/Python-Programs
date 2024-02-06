@@ -1,5 +1,5 @@
 import pygame as pg
-from scripts.conts import *
+from scripts.consts import *
 
 class Player:
         

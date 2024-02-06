@@ -1,7 +1,7 @@
 import pygame as pg
 from entities.player import Player
 from random import randint, random
-from scripts.conts import *
+from scripts.consts import *
 
 
 vec = pg.math.Vector2
