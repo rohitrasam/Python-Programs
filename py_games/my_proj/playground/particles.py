@@ -32,13 +32,19 @@ class Particles:
         
         angle = math.pi*random() # angle changes every frame
         self.pos[0] += self.vel[0]
-        self.pos[1] += self.vel[1]
-        # self.pos[1] += math.cos(angle)+self.vel[1]
+        # self.pos[1] += self.vel[1]
+        # self.pos[1] += math.cos(self.angle)+self.vel[1]
+        # self.pos[0] += math.cos(self.angle)
         # self.pos[1] += self.vel
-
-        # self.pos[0] -= math.cos(angle)*self.radius
-        # self.pos[0] += math.cos(self.angle)*self.radius
-        # self.vel[1] += self.grav
+        self.pos[0] += math.cos(self.angle)*self.radius
+        self.pos[1] += math.sin(self.angle)*self.radius
+        self.angle += 0.08
+        # self.pos[0] += math.cos(self.angle)
+        # self.pos[1] += math.sin(self.angle)
+        # self.angle += 0.1
+        # self.pos[1] -= math.cos(self.angle)*self.radius
+        # self.pos[0] += math.cos(self.angle)
+        self.vel[1] += self.grav
         self.radius -= 0.1
         if self.radius <= 0:
             particles.remove(self)
@@ -64,7 +70,7 @@ if __name__ == '__main__':
     while True:
         
         # display.fill((100, 100, 100))
-        display.fill((0, 0, 0))
+        display.fill((15, 15, 15))
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
@@ -73,12 +79,13 @@ if __name__ == '__main__':
                 start = not start
 
         if start:
-            # particles.append(Particles(randint(8, 15), (255, 128, 0)))
-            # particles.append(Particles(randint(8, 15), (255, 250, 0)))
-            particles.append(Particles(randint(5, 10), (150, 150, 150)))
-            particles.append(Particles(randint(5, 10), (200, 200, 200)))
-            particles.append(Particles(randint(5, 10), (100, 100, 100)))
-            # particles.append(Particles(randint(8, 15), (13, 0, 26)))
+            particles.append(Particles(randint(8, 15), (255, 128, 0)))
+            particles.append(Particles(randint(8, 15), (0, 250, 250)))
+            particles.append(Particles(randint(8, 15), (255, 250, 0)))
+            particles.append(Particles(randint(8, 15), (150, 150, 150)))
+            particles.append(Particles(randint(8, 15), (200, 200, 200)))
+            particles.append(Particles(randint(8, 15), (100, 100, 100)))
+            particles.append(Particles(randint(8, 15), (13, 0, 26)))
 
         render_particles()
 
