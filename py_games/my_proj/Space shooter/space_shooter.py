@@ -1,13 +1,13 @@
+
 import pygame as pg
 import math
 from sys import exit
 from random import random, randint
 
+pg.init()
 VEL = 6
 BULLET_VEL = 20
-HEIGHT = 720
-WIDTH = 1000
-
+WIDTH, HEIGHT = 1280, 720
 vec = pg.math.Vector2
 
 """Implement inheritance later"""
@@ -44,23 +44,28 @@ class Smoke:
         self.colours = {
                         0:(255, 128, 0), 
                         1:(255, 250, 0), 
-                        2:(150, 150, 150), 
-                        3:(13, 0, 26)
-                        # 0:(150, 150, 150), 
-                        # 1:(200, 200, 200), 
-                        # 2:(100, 100, 100), 
+                        2:(0, 250, 250), 
+                        3:(13, 0, 26),
+                        4:(150, 150, 150), 
+                        5:(200, 200, 200), 
+                        6:(100, 100, 100), 
                         }
-        # self.colour = self.colours[randint(0, 3)]
-        # self.angle = 2*math.pi*random()
+        self.colour = self.colours[randint(0, 6)]
+        self.angle = math.tau*random()
         self.radius = radius
     
     def update(self):
-
-        # angle = 2*math.pi*random()
-        self.pos[0] += self.vel[0]
-        # self.pos[1] += math.cos(angle)*self.radius
+        
+        """ Old smoke effect """
+        # self.pos[1] += self.vel[1]
+        # # self.pos[0] += math.cos(self.angle)
+        # self.pos[0] += self.vel[0]
         # self.angle += 0.1
-        self.pos[1] += self.vel[1]
+
+        """ Refactored smoke effect """
+        self.pos[0] += math.cos(self.angle)
+        self.pos[1] += math.sin(self.angle)
+        # self.angle -= 0.1
 
         self.radius -= 0.1
         if self.radius <= 0:
@@ -69,7 +74,7 @@ class Smoke:
         self.draw()
 
     def draw(self):
-        pg.draw.circle(screen, self.colours[randint(0, 3)], self.pos, self.radius)
+        pg.draw.circle(screen, self.colour, self.pos, self.radius)
 
 
 class Enemy(Player):
@@ -82,6 +87,7 @@ class Enemy(Player):
         self.rect = self.surf_copy.get_rect(center=self.pos)
         self.vel = vec(0, 0)
         self.max_hp = 5
+        self.drag = randint(4, 8) / 10
         self.hp = self.max_hp
         self.angle = 0
         # self.hp = 2
@@ -95,21 +101,22 @@ class Enemy(Player):
         self.health()
 
         dist = ((self.pos.x - player[0].pos.x)**2 + (self.pos.y - player[0].pos.y)**2)**0.5
-        self.vel.x = (player[0].pos.x - self.pos.x) / dist * VEL * 0.3
-        self.vel.y = (player[0].pos.y - self.pos.y) / dist * VEL * 0.3
+        self.vel.x = (player[0].pos.x - self.pos.x) 
+        self.vel.y = (player[0].pos.y - self.pos.y) 
         
         if self.hp <= 0:
             explosions.append(Explosion(self.pos))
             self.explosion.play()
             enemies.remove(self)
 
-        self.pos += self.vel
+        self.pos += (self.vel / dist * VEL * self.drag)
         self.rect.center = self.pos
     
     def health(self):   
         ratio = self.hp / self.max_hp
         if ratio <= 0.3:
-            smoke_particles.append(Smoke(randint(4, 7), self.rect.center))
+            for _ in range(3):
+                smoke_particles.append(Smoke(randint(4, 7), self.rect.center))
 
     def shoot_bullet(self):
         self.gunshot.play().set_volume(0.1)
@@ -127,10 +134,8 @@ class Shooter(Player):
         self.vel = vec(0, 0)
         self.max_hp = 100
         self.hp = self.max_hp
-        self.countdown = 0
         self.angle = 0
 
-    
     def update(self):
         
         self.angle = get_angle(self.pos)
@@ -156,7 +161,12 @@ class Shooter(Player):
             self.explosion.play()
             player.remove(self)
         
-        self.pos += self.vel
+        """ Correcting the diagonal movement by normalizing it """
+        if self.vel.x != 0 and self.vel.y != 0:
+            self.pos += self.vel.normalize() * VEL  # == self.pos += self.vel / math.hypot(self.vel.x, self.vel.y) * VEL
+        else:
+            self.pos += self.vel
+        
         if self.pos.y < 0:
             self.pos.y = HEIGHT
         if self.pos.y > HEIGHT:
@@ -173,8 +183,8 @@ class Shooter(Player):
     
     def health(self):   
         ratio = self.hp / self.max_hp
-        pg.draw.rect(screen, "red", (80, 10, 300, 30))
-        pg.draw.rect(screen, "lightblue", (80, 10, 300*ratio, 30))
+        pg.draw.rect(screen, "red", (25, 25, 300, 10))
+        pg.draw.rect(screen, "lightgreen", (25, 25, 300*ratio, 10))
 
 
 class Bullet:
@@ -255,14 +265,17 @@ def render_smoke():
 
 if __name__ == '__main__':
 
-    pg.init()
+    # pg.init()
 
     player = [Shooter()]
     enemies = []
     smoke_particles = []
     enemies.append(Enemy())
+    enemies.append(Enemy())
+    enemies.append(Enemy())
+    enemies.append(Enemy())
 
-    bas_font = pg.font.Font(None, 50)
+    # bas_font = pg.font.Font(None, 30)
     explosions = []
 
     clock = pg.time.Clock()
@@ -276,19 +289,20 @@ if __name__ == '__main__':
     far = pg.image.load("Space Shooter/imgs/space_background_pack/parallax-space-3.png").convert_alpha()
     big = pg.image.load("Space Shooter/imgs/space_background_pack/parallax-space-4.png").convert_alpha()
 
-    stars_height = stars.get_height()
-    stars_width = stars.get_width()
+    stars_width, stars_height = stars.get_size()
     start = False
     scroll = 0
 
+    stars_w_no = math.ceil(WIDTH / stars_width)+1
+    stars_h_no = math.ceil(HEIGHT / stars_height)+1
 
     """ Main loop """
     while True:
 
         fps = clock.tick(60)/1000
         screen.blit(bg, (0, 0))
-        for i in range(6):
-            for j in range(5):
+        for i in range(stars_w_no):
+            for j in range(stars_h_no):
                 screen.blit(stars, (i*stars_width+scroll, j*stars_height))
         
         if abs(scroll) > stars_width:
@@ -298,29 +312,30 @@ if __name__ == '__main__':
         screen.blit(big, (WIDTH/4, HEIGHT/2+HEIGHT/4))
 
         for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                exit()
+
+            # if event.type == pg.QUIT:  
         
+            if start and event.type == pg.MOUSEBUTTONDOWN and pg.mouse.get_pressed()[0] and player:
+                Bullet.ammo.append(player[0].shoot_bullet())
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_f and player:
-                    Bullet.ammo.append(player[0].shoot_bullet())
                 if event.key == pg.K_SPACE:
                     start = not start
+                if event.key == pg.K_ESCAPE:
+                    pg.quit()
+                    exit()
         if start:
             if player:
-                # pg.draw.rect(screen, "red", player[0].rect)
+ 
                 screen.blit(player[0].surf_copy, player[0].rect)
                 player[0].update()
-                text_surf = bas_font.render("HP: ", True, (0, 127, 0))
-                screen.blit(text_surf, (10, 10))
+                # text_surf = bas_font.render("HP: ", True, (0, 127, 250))
+                # screen.blit(text_surf, (40, 20))
             
             scroll -= 2
             if smoke_particles:
                 render_smoke()
             render_enemies()
             render_explosions()
-            # enemy1.update()
             render_bullets()
 
         pg.display.update()
