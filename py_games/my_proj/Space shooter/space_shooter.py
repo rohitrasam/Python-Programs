@@ -22,7 +22,7 @@ class Explosion:
 
     def __init__(self, pos) -> None:
         self.current_frame = 0
-        self.surfs = [pg.transform.scale2x(pg.transform.rotate(pg.image.load(f"Space Shooter/imgs/Explosion/CircleSplosionV2_100x100px{i}.png"), -180)) for i in range(2, 14)]
+        self.surfs = [pg.transform.scale2x(pg.transform.rotate(pg.image.load(f"Space Shooter/imgs/Explosion/CircleSplosionV2_100x100px{i}.png").convert_alpha(), -180)) for i in range(2, 14)]
         self.surf = self.surfs[0]
         self.rect = self.surf.get_rect(center=pos)
 
@@ -50,6 +50,7 @@ class Smoke:
                         5:(200, 200, 200), 
                         6:(100, 100, 100), 
                         }
+        
         self.colour = self.colours[randint(0, 6)]
         self.angle = math.tau*random()
         self.radius = radius
@@ -81,7 +82,7 @@ class Enemy(Player):
 
     def __init__(self) -> None:
         super().__init__()
-        self.surf = pg.image.load("Space Shooter/imgs/tiny-spaceships/2X/tiny_ship9.png")
+        self.surf = pg.image.load("Space Shooter/imgs/tiny-spaceships/2X/tiny_ship9.png").convert_alpha()
         self.surf_copy = self.surf
         self.pos = vec(WIDTH+50, HEIGHT * random())
         self.rect = self.surf_copy.get_rect(center=self.pos)
@@ -90,12 +91,14 @@ class Enemy(Player):
         self.drag = randint(4, 8) / 10
         self.hp = self.max_hp
         self.angle = 0
+        self.mask = pg.mask.from_surface(self.surf_copy)
         # self.hp = 2
 
     def update(self):
 
         self.angle = get_angle(self.pos, player[0].pos)
         self.surf_copy = pg.transform.rotate(self.surf, self.angle-90)
+        self.mask = pg.mask.from_surface(self.surf_copy)
         self.rect = self.surf_copy.get_rect(center=self.pos)
         
         self.health()
@@ -127,9 +130,10 @@ class Enemy(Player):
 class Shooter(Player):
     def __init__(self) -> None:
         super().__init__()
-        self.surf = pg.image.load("Space Shooter/imgs/tiny-spaceships/2X/tiny_ship15.png")
-        self.surf_copy = self.surf
         self.pos = vec(50, HEIGHT/2)
+        self.surf = pg.image.load("Space Shooter/imgs/tiny-spaceships/2X/tiny_ship15.png").convert_alpha()
+        self.surf_copy = self.surf
+        self.mask = pg.mask.from_surface(self.surf_copy)
         self.rect = self.surf_copy.get_rect(center=self.pos)
         self.vel = vec(0, 0)
         self.max_hp = 100
@@ -140,6 +144,7 @@ class Shooter(Player):
         
         self.angle = get_angle(self.pos)
         self.surf_copy = pg.transform.rotate(self.surf, self.angle-90)
+        self.mask = pg.mask.from_surface(self.surf_copy)
         self.rect = self.surf_copy.get_rect(center=self.pos)
 
         self.health()
@@ -197,8 +202,9 @@ class Bullet:
         self.pos = pos
         self.angle = angle
         self.dest = dest
-        self.surf = pg.transform.scale(pg.image.load("Space Shooter/imgs/projectile.png"), (20, 10))
+        self.surf = pg.transform.scale(pg.image.load("Space Shooter/imgs/projectile.png").convert_alpha(), (20, 10))
         self.surf_copy = self.surf
+        self.mask = pg.mask.from_surface(self.surf_copy)
         self.dist = ((self.dest.x-self.pos.x)**2 + (self.dest.y-self.pos.y)**2)**0.5
         self.dir = vec(self.dest.x - self.pos.x, self.dest.y - self.pos.y)
         self.vel = vec(0, 0)
@@ -212,22 +218,30 @@ class Bullet:
             self.vel.y = self.dir.y * BULLET_VEL / self.dist
         
         self.surf_copy = pg.transform.rotate(self.surf, self.angle)
-
+        self.mask = pg.mask.from_surface(self.surf_copy)
         self.pos += self.vel
         self.rect.center = self.pos
 
         if self.rect.centerx > WIDTH + 40 or self.rect.centerx < -40:
             Bullet.ammo.remove(self)
 
+        """ Collision detection"""
         enem_collision_idx = self.rect.collidelist(enemies)
         shooter_coll_idx = self.rect.collidelist(player)
         if enem_collision_idx > -1 and self.type == "Player":
-            enemies[enem_collision_idx].hp -= 1
-            Bullet.ammo.remove(self)
+            enemy = enemies[enem_collision_idx]
+            offset = enemy.rect.left - self.rect.left, enemy.rect.top - self.rect.top
+            """ Pixel perfect collision """
+            if self.mask.overlap(enemy.mask, offset):
+                enemies[enem_collision_idx].hp -= 1
+                Bullet.ammo.remove(self)
         
         if shooter_coll_idx > -1 and self.type == "Enemy":
-            player[shooter_coll_idx].hp -= 1
-            Bullet.ammo.remove(self)
+            offset = player[0].rect.left - self.rect.left, player[0].rect.top - self.rect.top
+            """ Pixel perfect collision """
+            if self.mask.overlap(player[0].mask, offset):
+                player[shooter_coll_idx].hp -= 1
+                Bullet.ammo.remove(self)
         
         screen.blit(self.surf_copy, self.rect)
 
@@ -267,20 +281,23 @@ if __name__ == '__main__':
 
     # pg.init()
 
+    clock = pg.time.Clock()
+    screen = pg.display.set_mode((WIDTH, HEIGHT))
+    pg.display.set_caption("Space Jam")
+
+
+
     player = [Shooter()]
     enemies = []
     smoke_particles = []
     enemies.append(Enemy())
-    enemies.append(Enemy())
-    enemies.append(Enemy())
-    enemies.append(Enemy())
+    # enemies.append(Enemy())
+    # enemies.append(Enemy())
+    # enemies.append(Enemy())
 
     # bas_font = pg.font.Font(None, 30)
     explosions = []
 
-    clock = pg.time.Clock()
-    screen = pg.display.set_mode((WIDTH, HEIGHT))
-    pg.display.set_caption("Space Jam")
 
     """ Refactor the part below """
     bg = pg.transform.scale(pg.image.load("Space Shooter/imgs/space_background_pack/parallax-space-1.png").convert_alpha(), screen.get_size())
