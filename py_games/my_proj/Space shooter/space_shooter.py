@@ -11,6 +11,32 @@ WIDTH, HEIGHT = 1280, 720
 vec = pg.math.Vector2
 
 """Implement inheritance later"""
+
+class Collectibles:
+
+    def __init__(self) -> None:
+        pass    
+
+class HealthPack(Collectibles):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.pos = vec(WIDTH + 50, randint(3, 4) / 10*HEIGHT)
+        self.surf = pg.image.load("Space shooter\imgs\collectibles\health32x32.png")
+        self.rect = self.surf.get_rect(center=(self.pos))
+        self.vel = vec(3, 8)
+        self.angle = 0
+
+    def update(self):
+        self.pos.x -= self.vel.x
+        # self.pos.y += math.sin(self.angle)
+        self.pos.y += self.vel.y*math.sin(self.angle)
+        self.rect.center = self.pos
+        self.angle += 0.04
+
+        screen.blit(self.surf, self.rect)
+        
+
 class Player:
         
         def __init__(self) -> None:
@@ -40,7 +66,7 @@ class Smoke:
 
     def __init__(self, radius, pos) -> None:
         self.pos = vec(pos)
-        self.vel = vec(6, randint(0, 60) / 10 - 3)
+        # self.vel = vec(6, randint(0, 60) / 10 - 3)
         self.colours = {
                         0:(255, 128, 0), 
                         1:(255, 250, 0), 
@@ -49,6 +75,7 @@ class Smoke:
                         4:(150, 150, 150), 
                         5:(200, 200, 200), 
                         6:(100, 100, 100), 
+                        # 7:(250, 250, 250), 
                         }
         
         self.colour = self.colours[randint(0, 6)]
@@ -118,7 +145,7 @@ class Enemy(Player):
     def health(self):   
         ratio = self.hp / self.max_hp
         if ratio <= 0.3:
-            for _ in range(3):
+            for _ in range(8):
                 smoke_particles.append(Smoke(randint(4, 7), self.rect.center))
 
     def shoot_bullet(self):
@@ -222,7 +249,7 @@ class Bullet:
         self.pos += self.vel
         self.rect.center = self.pos
 
-        if self.rect.centerx > WIDTH + 40 or self.rect.centerx < -40:
+        if self.rect.centerx > WIDTH + 40 or self.rect.centerx < -40 or self.rect.centery < -40 or self.rect.centery > HEIGHT + 40:
             Bullet.ammo.remove(self)
 
         """ Collision detection"""
@@ -285,15 +312,14 @@ if __name__ == '__main__':
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     pg.display.set_caption("Space Jam")
 
-
-
     player = [Shooter()]
     enemies = []
     smoke_particles = []
     enemies.append(Enemy())
-    # enemies.append(Enemy())
-    # enemies.append(Enemy())
-    # enemies.append(Enemy())
+    enemies.append(Enemy())
+    enemies.append(Enemy())
+    enemies.append(Enemy())
+    health_p = HealthPack()
 
     # bas_font = pg.font.Font(None, 30)
     explosions = []
@@ -354,5 +380,6 @@ if __name__ == '__main__':
             render_enemies()
             render_explosions()
             render_bullets()
+            # health_p.update()
 
         pg.display.update()
