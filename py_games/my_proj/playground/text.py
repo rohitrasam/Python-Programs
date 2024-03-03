@@ -36,6 +36,7 @@ if __name__ == '__main__':
                     temp_text += event.unicode
 
         text_surf = base_font.render(temp_text, True, (0, 200, 200))
+        
         display.blit(text_surf, (WIDTH/2, HEIGHT/2))
         pg.display.update()
         clock.tick(60)
