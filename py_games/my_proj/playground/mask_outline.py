@@ -7,7 +7,7 @@ SIZE = 800
 class Image:
 
     def __init__(self) -> None:
-        self.surf = pg.image.load("Space shooter/imgs/tiny-spaceships/4X/tiny_ship9.png") .convert_alpha()
+        self.surf = pg.image.load("Space shooter/data/imgs/tiny-spaceships/4X/tiny_ship9.png") .convert_alpha()
         self.rect = self.surf.get_rect(center=(SIZE/3,)*2)
         self.mask = pg.mask.from_surface(self.surf)
 
@@ -20,18 +20,22 @@ class Image:
         for x in range(self.surf_w):
             for y in range(self.surf_h):
                 if self.new_surf.get_at((x, y))[0] != 0:    # checks if the pixel colour is white or not
-                    self.new_surf.set_at((x, y), (255, 0, 0))   # sets the pixel colour to red
+                    self.new_surf.set_at((x, y), (15, 0, 0))   # sets the pixel colour to red
 
 
     def update(self, display):
-        display.blit(self.surf, self.rect)
 
         """ Outline """
-        # for point in self.mask.outline():
-        #     x = self.rect.left + point[0]
-        #     y = self.rect.top + point[1]
-        #     pg.draw.circle(display, "red", (x, y), 2)
-        display.blit(self.new_surf, self.rect)
+        for point in self.mask.outline():
+            x = self.rect.left + point[0]
+            y = self.rect.top + point[1]
+        #     # pg.draw.rect(display, "black", (x-2, y-2, 1, 1))    # gives a central shadow effect
+        #     # pg.draw.rect(display, "black", (x-2, y-2, 2, 2))    # gives a left shadow effect
+        #     # pg.draw.rect(display, "black", (x, y, 4, 4))    # gives a right shadow effect
+            pg.draw.circle(display, "red", (x, y), 2)  # outline effect
+        # display.blit(self.new_surf, self.rect)
+        # display.blit(self.surf, self.rect)
+    
 
 class Game:
 

@@ -49,9 +49,9 @@ class Spark():
         self.loc[1] += movement[1]
 
         # a bunch of options to mess around with relating to angles...
-        #self.point_towards(math.pi / 2, 0.02)
-        # self.velocity_adjust(0.975, 0.2, 8, dt)
-        self.angle += 0.1
+        # self.point_towards(math.pi / 2, 0.02)
+        self.velocity_adjust(0.975, 0.2, 8, dt)
+        # self.angle += 0.1
 
         self.speed -= 0.1
 
@@ -61,10 +61,10 @@ class Spark():
     def draw(self, surf, offset=[0, 0]):
         if self.alive:
             points = [
-                [self.loc[0] + math.cos(self.angle) * self.speed * self.scale, self.loc[1] + math.sin(self.angle) * self.speed * self.scale],
-                [self.loc[0] + math.cos(self.angle + math.pi / 2) * self.speed * self.scale * 0.3, self.loc[1] + math.sin(self.angle + math.pi / 2) * self.speed * self.scale * 0.3],
-                [self.loc[0] - math.cos(self.angle) * self.speed * self.scale * 3.5, self.loc[1] - math.sin(self.angle) * self.speed * self.scale * 3.5],
-                [self.loc[0] + math.cos(self.angle - math.pi / 2) * self.speed * self.scale * 0.3, self.loc[1] - math.sin(self.angle + math.pi / 2) * self.speed * self.scale * 0.3],
+[self.loc[0] + math.cos(self.angle) * self.speed * self.scale, self.loc[1] + math.sin(self.angle) * self.speed * self.scale],
+[self.loc[0] + math.cos(self.angle + math.pi / 2) * self.speed * self.scale * 0.3, self.loc[1] + math.sin(self.angle + math.pi / 2) * self.speed * self.scale * 0.3],
+[self.loc[0] - math.cos(self.angle) * self.speed * self.scale * 3.5, self.loc[1] - math.sin(self.angle) * self.speed * self.scale * 3.5],
+[self.loc[0] + math.cos(self.angle - math.pi / 2) * self.speed * self.scale * 0.3, self.loc[1] - math.sin(self.angle + math.pi / 2) * self.speed * self.scale * 0.3],
                 ]
             pygame.draw.polygon(surf, self.color, points)
 

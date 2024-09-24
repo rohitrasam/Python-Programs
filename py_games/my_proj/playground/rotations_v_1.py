@@ -7,60 +7,37 @@ from numpy.linalg import inv
 
 def rotate_rect(x, y, width, height, phi):
 
-    # points = []
-    # points1 = []
+    points = []
+    points1 = array([(x, y, 1),
+               (x+width, y, 1),
+               (x+width, y+height, 1),
+               (x, y+height, 1)])
 
-    # theta = math.atan2(height/2, width/2)
+    theta = math.atan2(height/2, width/2)
 
-    # radius = math.sqrt((height / 2)**2 + (width / 2)**2)
+    radius = math.sqrt((height / 2)**2 + (width / 2)**2)
 
-    # thetas = [-theta, theta, -theta+math.pi, theta+math.pi]
+    thetas = [-theta, theta, -theta+math.pi, theta+math.pi]
 
-    # for theta in thetas:
-    #     points.append((x+height/2*math.cos(theta+phi)+width/2*math.sin(theta+phi), y-height/2*math.sin(theta+phi)+width/2*math.cos(theta+phi)))
-    #     # points1.append((x+radius*math.cos(theta+phi), y-radius*math.sin(theta+phi)))
-    points1 = array([[200+x, y+200, 1],
-                     [200+x+width, y+200, 1],
-                     [200+x+width, y+200+height, 1],
-                     [200+x, y+200+height, 1]
-                     ])
-    points1 = array([[200+x, y, 1],
-                     [200+x+width, y, 1],
-                     [200+x+width, y+height, 1],
-                     [200+x, y+height, 1]
-                     ])
-    # points1 = array([[200+x, y, 1],
-    #                  [200+x+width, y, 1],
-    #                  [200+x+width, y+height, 1],
-    #                  [200+x, y+height, 1]
-    #                  ])
-    # points1 = array([[200+x, y, 1],
-    #                  [200+x+width, y, 1],
-    #                  [200+x+width, y+height, 1],
-    #                  [200+x, y+height, 1]
-    #                  ])
+
+
+    for theta in thetas:
+        points.append((x+width/2*math.cos(theta+phi)+height/2*math.sin(theta+phi), y-width/2*math.sin(theta+phi)+height/2*math.cos(theta+phi)))
+        # points.append((x+radius*math.cos(theta+phi), y-radius*math.sin(theta+phi)))
 
     t1 = array([[1, 0, 0],
                 [0, 1, 0],
-                [-(x+width/2), -(y+height/2), 1]
-                ])
-    
-    t1 = array([[1, 0, 0],
-                [0, 1, 0],
-                [-(500), -(500), 1]
-                ])
-    
+                [-(x+2*width), -(y+2*height), 1]])
+
     r1 = array([[math.cos(phi), math.sin(phi), 0],
-                [-math.sin(phi), math.cos(phi), 0],
-                [0, 0, 1]
-                ])
+               [-math.sin(phi), math.cos(phi), 0],
+               [0, 0, 1]])
     
-    points1 = points1@t1@r1@inv(t1)
-    # print(points1)
+    t1_inv = inv(t1)
 
-
-    # pg.draw.polygon(display, "red", points)
-    pg.draw.polygon(display, "green", points1[:, :2])
+    pg.draw.polygon(display, "red", points)
+    points1 = points1@t1@r1@t1_inv
+    pg.draw.polygon(display, "green", points1[:, :-1])
 
 
 if __name__ == '__main__':

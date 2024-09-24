@@ -71,7 +71,7 @@ class Snake():
         self.rect.center = self.pos
         snake.paths.append(snake.rect.copy())
         self.paths = self.paths[-self.size:]
-        print(self.paths)
+        
 
 
     def draw(self, screen):
@@ -110,4 +110,4 @@ if __name__ == '__main__':
         food.draw(display)
         pg.display.update()
         dt = clock.tick(10)/1000
-        print(dt)
+        

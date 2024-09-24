@@ -1,5 +1,0 @@
-VEL = 6
-BULLET_VEL = 15
-HEIGHT = 720
-WIDTH = 1000
-BASE_PATH = "Space shooter/imgs/"
