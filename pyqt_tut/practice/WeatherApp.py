@@ -9,7 +9,7 @@ TODO: Select city and country
 TODO: Search city and country by name
 """
 
-API_KEY = "f3233804c9134949050402bca751ffa9"
+API_KEY = "Your API KEY"
 UNITS = "metric"
 URL = "https://api.openweathermap.org/data/2.5/weather?q={}&APPID={}&units={}"
 
