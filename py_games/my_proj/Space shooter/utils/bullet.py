@@ -31,7 +31,7 @@ class Bullet:
         if self.dist > 0:
             self.vel.x = (self.dir.x / self.dist)* BULLET_VEL
             self.vel.y = (self.dir.y / self.dist)* BULLET_VEL
-        
+
         self.pos += self.vel
         self.rect.center = self.pos
 

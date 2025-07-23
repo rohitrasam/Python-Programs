@@ -69,8 +69,8 @@ class App:
         self.display = pg.display.set_mode(self.size)
         self.clock = pg.time.Clock()
         self.list = LinkedList()
-        self.activeNode = None
-        pg.display.set_caption("Linked List vfx")
+        self.activeNode = -1
+        pg.display.set_caption("Linked List")
 
     def main(self):
 
@@ -87,12 +87,12 @@ class App:
                         if node.rect.collidepoint(pg.mouse.get_pos()):
                             self.activeNode = node_num
                     
-                if event.type == pg.MOUSEMOTION and self.activeNode:
+                if event.type == pg.MOUSEMOTION and self.activeNode > -1:
                     self.list.list[self.activeNode].rect.centerx += pg.mouse.get_pos()[0] - self.list.list[self.activeNode].rect.centerx
                     self.list.list[self.activeNode].rect.centery += pg.mouse.get_pos()[1] - self.list.list[self.activeNode].rect.centery
 
                 if event.type == pg.MOUSEBUTTONUP:
-                    self.activeNode = None
+                    self.activeNode = -1
             
 
             self.list.render(self.display)
@@ -102,11 +102,11 @@ class App:
 
 if __name__ == '__main__':
     app = App()
-    app.list.insert(3, app.font, -1)
-    app.list.insert(4, app.font, -1)
-    app.list.insert(1, app.font, -1)
-    app.list.insert(2, app.font, -1)
+    app.list.insert(3, app.font)
+    app.list.insert(4, app.font)
+    app.list.insert(1, app.font)
+    app.list.insert(2, app.font)
     app.list.insert(12, app.font, 2 )
     app.list.insert(11, app.font, 1)
-    app.list.insert(22, app.font, -1)
+    app.list.insert(22, app.font)
     app.main()

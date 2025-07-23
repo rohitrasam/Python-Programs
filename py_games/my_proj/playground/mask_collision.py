@@ -20,7 +20,7 @@ class Mouse:
 class Image:
 
     def __init__(self) -> None:
-        self.surf = pg.image.load("Space shooter/imgs/tiny-spaceships/4X/tiny_ship9.png") .convert_alpha()
+        self.surf = pg.image.load("Space shooter/data/imgs/tiny-spaceships/4X/tiny_ship9.png") .convert_alpha()
         self.rect = self.surf.get_rect(center=(SIZE/3,)*2)
         self.mask = pg.mask.from_surface(self.surf)
 

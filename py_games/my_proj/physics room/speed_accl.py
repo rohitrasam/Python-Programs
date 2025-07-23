@@ -38,13 +38,12 @@ class Entity:
         else:
             self.acc.y = grav
 
-        if self.pos.y > SIZE[1]:
+        if self.pos.y > SIZE[1]-2:
             self.vel.y = -self.vel.y
         if self.pos.y-self.size[1] < 0:
             self.vel.y = -self.vel.y
 
-        
-        if self.pos.x + self.size[0]/2 > SIZE[0]:
+        if self.pos.x + self.size[0]/2 > SIZE[0]-2:
             self.vel.x = -self.vel.x
         if self.pos.x-self.size[0]/2 < 0:
             self.vel.x = -self.vel.x 
@@ -89,6 +88,9 @@ if __name__ == '__main__':
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 pg.quit()
                 exit()
+            if event.type == pg.MOUSEBUTTONDOWN and pg.mouse.get_just_pressed()[0]:
+                for _ in range(10):
+                    entities.append(Entity(spawn_area(), (5, 5), (color(), color(), color()), vel, acc))
 
         for entity in entities:
             entity.render(display)

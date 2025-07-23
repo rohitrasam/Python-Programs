@@ -53,8 +53,8 @@ class Entity:
         # setting the x component of velocity
         self.vel.x = self.speed*math.cos(self.theta)
 
-        # checking is the entity hits the ground and if it's in resting state or not
-        if self.pos.y+1 > SIZE[1] and not self.rest:
+        # checking if the entity hits the ground and if it's in resting state or not
+        if self.pos.y > SIZE[1] and not self.rest:
             # decreasing the speed of the entity by 30% each time it hits the ground
             self.speed -= self.speed * 0.3
             self.vel.y = -self.speed * math.sin(self.theta)

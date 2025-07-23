@@ -17,7 +17,7 @@ class App:
         self.clock = pg.time.Clock()
         # gl.glClearColor(0.1, 0.2, 0.9, 1.0)
         self.fps = 60
-        self.shader = self.createShader("D:/Python Programs/opengl/shaders/shading.shader")
+        self.shader = self.createShader("D:/Python Programs/opengl/shaders/shading2.shader")
         self.screen = Screen()
         gl.glUseProgram(self.shader)
         self.run()
@@ -85,10 +85,17 @@ class Screen:
 
     def __init__(self) -> None:
         
+        # self.vertices = np.array([
+        #     -0.5,  0.5, 0, 1.0, 0.1, 0.5,
+        #      0.5,  0.5, 0, 0.1, 1.0, 0.5,
+        #      0.5, -0.5, 0, 0.1, 0.5, 1.0,
+        #     -0.5, -0.5, 0, 0.5, 1.0, 0.1,
+        # ], dtype=np.float32)
+
         self.vertices = np.array([
-            -1,  1, 0, 1.0, 0.1, 0.5,
-             1,  1, 0, 0.1, 1.0, 0.5,
-             1, -1, 0, 0.1, 0.5, 1.0,
+            -1,  1, 0, 1.0, 0.1, 1,
+             1,  1, 0, 0.1, 1.0, 1,
+             1, -1, 0, 0.1, 1, 1.0,
             -1, -1, 0, 0.5, 1.0, 0.1,
         ], dtype=np.float32)
 

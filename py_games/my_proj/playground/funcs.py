@@ -27,7 +27,7 @@ if __name__ == '__main__':
         pg.draw.circle(display, (255,)*3, (x, y), 1)
 
         phi += 0.001
-        y-= math.log(phi)
+        y += math.log(phi)
         x += 1
         # display.fill((0, 0, 0))
         

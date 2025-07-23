@@ -3,16 +3,12 @@
 
 layout (location=0) in vec3 pos;
 layout (location=1) in vec3 color;
-
 out vec3 colorCoord;
 
-void main(){
+void main(){ 
     gl_Position = vec4(pos, 1.0);
     colorCoord = color;
 }
-
-
-// circle shape
 
 #shader fragment
 #version 330 core
@@ -23,79 +19,32 @@ out vec4 fragColor;
 uniform float time;
 uniform vec2 u_resolution;
 
-mat3 rotate(){
-    return mat3(1,         0,          0,
-                0, cos(time), -sin(time),
-                0, sin(time),  cos(time));
-}
-
-float circle(vec2 position, float radius){
-    return 1-step(radius, length(position-0.5));
-}
-
-vec2 randomVec(vec2 position){
-    position += 0.05;
-    float x = dot(position, vec2(987.654, 654.321));
-    float y = dot(position, vec2(654.321, 765.432));
-    vec2 randvec = vec2(x, y);
-    randvec = sin(randvec)*2;
-    randvec *= 42345.67890;
-    randvec = sin(randvec+time);
-    return randvec;
+vec3 palette(float t){
+    vec3 a = vec3(0.5, 0.5, 0.5);
+    vec3 b = vec3(0.5, 0.5, 0.5);
+    vec3 c = vec3(1, 1, 1);
+    vec3 d = vec3(0.263, 0.416, 0.557);
+    return a * b*cos(6.2318*(c*t+d));
 }
 
 void main(){
-    vec3 position = vec3(gl_FragCoord.xy / u_resolution, 1.0);
-    // position = rotate() * (position-vec3(0.5));
-    vec3 color = vec3(1.0);
-    vec3 position1 = position;
-    float rad = circle(position.xy, 0.4);
-    position *= rad;
-    position.xy *= 5;
-    vec2 gridId = floor(position.xy);
-    vec2 gridUv = fract(position.xy);
+    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+    uv.x *= u_resolution.x/u_resolution.y;
+    uv = uv*2 - 1;
+    vec2 uv0 = uv;
+    vec3 finalColor = vec3(0);
+    for(int i=0; i < 2; i++){
+        uv *= 2;
+        uv = fract(uv);
+        uv -= 0.5;
+        float d = length(uv);
+        vec3 col = palette(length(uv0)+time*0.5);
+        d = sin(d*8+time)/8;
+        d = abs(d);
+        // d = smoothstep(0, 0.1, d);
+        d = 0.02 / d;
+        finalColor += col * d;
+    }
+    fragColor = vec4(finalColor, 1.0);
 
-    // calculate the 4 corners of each cell
-    vec2 bl = gridId + vec2(0.0, 0.0);
-    vec2 br = gridId + vec2(1.0, 0.0);
-    vec2 tl = gridId + vec2(0.0, 1.0);
-    vec2 tr = gridId + vec2(1.0, 1.0);
-
-    // generate random vectors on 4 corners of each cell
-    vec2 randVecBl = randomVec(bl);
-    vec2 randVecBr = randomVec(br);
-    vec2 randVecTl = randomVec(tl);
-    vec2 randVecTr = randomVec(tr);
-
-    // calculate distance of 4 corners from each pixel
-    vec2 distBl = gridUv - vec2(0.0);
-    vec2 distBr = gridUv - vec2(1.0, 0.0);
-    vec2 distTl = gridUv - vec2(0.0, 1.0);
-    vec2 distTr = gridUv - vec2(1.0);
-
-    // calculate teh dot product of random vectors and the vectors from 4 corners to each pixel
-    float dotBl = dot(randVecBl, distBl);
-    float dotBr = dot(randVecBr, distBr);
-    float dotTl = dot(randVecTl, distTl);
-    float dotTr = dot(randVecTr, distTr);
-
-    // smoothen the grid patterns
-    gridUv = smoothstep(0.2, 1.0, gridUv);
-    // gridUv = step(0.4, gridUv);
-    // gridUv = gridUv*gridUv*gridUv*(gridUv*(gridUv*6.0-15.0)+10.0);
-
-    // interpolate the result
-    float b = mix(dotBl, dotBr, gridUv.x);
-    float t = mix(dotTl, dotTr, gridUv.x);
-    float perlin = mix(b, t, gridUv.y);
-
-    // perlin = smoothstep(0.0, 0.5, perlin);
-    perlin = step(perlin, 0.01);
-    color *= (0.1*perlin+0.1);
-    float sky = circle(position1.xy, 0.35);
-    color *= sky;
-    
-
-    fragColor = vec4(color*colorCoord, 1.0);
 }
-

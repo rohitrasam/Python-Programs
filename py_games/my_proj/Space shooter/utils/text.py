@@ -10,7 +10,7 @@ class Text:
         self.colour = colour
         self.shadow = shadow
         self.surf = self.font.render(text, True, self.colour)
-        self.surf_width , self.surf_height = self.surf.get_size()
+        self.surf_width, self.surf_height = self.surf.get_size()
         self.surf_rect = self.surf.get_rect(center=pos)
         self.mask = pg.mask.from_surface(self.surf)
         self.mask_surf = self.mask.to_surface()

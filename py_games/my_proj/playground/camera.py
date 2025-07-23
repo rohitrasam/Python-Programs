@@ -33,19 +33,21 @@ class Player:
         
         self.rect.center = self.pos
 
-    def render(self, screen):
-        screen.blit(self.surf, self.rect)
+    def render(self, screen, offset):
+        screen.blit(self.surf, self.rect.center - offset)
 
 
 class Obstacles:
 
     def __init__(self, pos) -> None:
+        self.pos = array(pos)
         self.surf = pg.Surface((50, 50))
         self.surf.fill((255, 0, 0))
-        self.pos = array(pos)
+        self.rect = self.surf.get_rect(center=self.pos)
     
     def render(self, screen, offset):
-        screen.blit(self.surf, offset)
+        self.rect.center = offset
+        screen.blit(self.surf, self.rect)
 
 class Camera:
 
@@ -55,9 +57,9 @@ class Camera:
         self.half_w, self.half_h = (240,)*2
 
     def center_target(self, target: Player):
-        self.offset[0] = target.rect.centerx - self.half_w
-        self.offset[1] = target.rect.centery - self.half_h
-    
+        self.offset[0] = target.pos[0] - self.half_w # - self.offset[0]
+        self.offset[1] = target.pos[1] - self.half_h # - self.offset[1]
+
     def draw(self, obs: list[Obstacles], player: Player, screen):
 
         self.center_target(player)
@@ -93,7 +95,7 @@ class Game:
 
             self.camera.draw(self.obs, self.player, self.display)
             self.player.move()
-            self.player.render(self.display)
+            self.player.render(self.display, self.camera.offset)
 
             pg.display.update()
             self.clock.tick(60)

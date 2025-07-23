@@ -4,12 +4,118 @@ import pygame as pg
 
 
 
+""" 1st Method using pygame's functions """
+# class Player:
+
+#     def __init__(self, pos) -> None:
+        
+#         self.surf = pg.image.load("Space shooter/data/imgs/tiny-spaceships/2X/tiny_ship15.png")
+#         self.surf_copy = self.surf
+#         self.pos = pos
+#         self.rect = self.surf_copy.get_rect(center=pos)
+#         self.display = pg.display.get_surface()
+#         self.angle = 0
+
+#     def move(self, vel):
+#         dir = pg.Vector2(vel, 0).rotate(-self.angle)
+#         self.pos += dir
+#         self.rect.center = self.pos
+
+#     def update(self):
+#         mx, my = pg.mouse.get_pos()
+#         dx = mx - self.pos[0]
+#         dy = self.pos[1] - my
+#         self.angle = math.atan2(dy, dx) * 180 / math.pi
+#         self.surf_copy = pg.transform.rotate(self.surf, self.angle-90)
+#         self.rect = self.surf_copy.get_rect(center=self.pos)
+
+#         keys = pg.key.get_pressed()
+#         if keys[pg.K_w]:
+#             self.move(5)
+#         if keys[pg.K_s]:
+#             self.move(-5)
+
+
+""" 2nd Method using cos and sin """
+# class Player:
+
+#     def __init__(self, pos) -> None:
+        
+#         self.surf = pg.image.load("Space shooter/data/imgs/tiny-spaceships/2X/tiny_ship15.png")
+#         self.surf_copy = self.surf
+#         self.pos = pos
+#         self.rect = self.surf_copy.get_rect(center=pos)
+#         self.display = pg.display.get_surface()
+#         self.angle = 0
+#         self.speed = 6
+#         self.vel = pg.Vector2()
+
+#     def move(self, speed):
+#         self.vel.x = speed * math.cos(math.radians(self.angle))
+#         self.vel.y = -speed * math.sin(math.radians(self.angle))
+#         self.pos += self.vel
+#         self.rect.center = self.pos
+
+#     def update(self):
+#         mx, my = pg.mouse.get_pos()
+#         dx = mx - self.pos[0]
+#         dy = self.pos[1] - my
+#         self.angle = math.atan2(dy, dx) * 180 / math.pi
+#         self.surf_copy = pg.transform.rotate(self.surf, self.angle - 90)
+#         self.rect = self.surf_copy.get_rect(center=self.pos)
+
+#         keys = pg.key.get_pressed()
+#         if keys[pg.K_w]:
+#             self.move(self.speed)
+#         if keys[pg.K_s]:
+#             self.move(-self.speed)
+
+
+""" 3rd Method using distances and direction """
+class Player:
+
+    def __init__(self, pos) -> None:
+        
+        self.surf = pg.image.load("Space shooter/data/imgs/tiny-spaceships/2X/tiny_ship15.png")
+        self.surf_copy = self.surf
+        self.pos = pos
+        self.rect = self.surf_copy.get_rect(center=pos)
+        self.display = pg.display.get_surface()
+        self.angle = 0
+        self.speed = 6
+        self.vel = pg.Vector2()
+        # self.dist = -1
+
+    def move(self, dx, dy, speed):
+        self.vel.x = (dx / self.dist) * speed
+        self.vel.y = -(dy / self.dist) * speed
+
+        self.pos += self.vel
+
+
+    def update(self):
+        mx, my = pg.mouse.get_pos()
+        dx = mx - self.pos[0]
+        dy = self.pos[1] - my
+        self.angle = math.atan2(dy, dx) * 180 / math.pi
+        self.surf_copy = pg.transform.rotate(self.surf, self.angle - 90)
+        self.rect = self.surf_copy.get_rect(center=self.pos)
+        self.dist = math.hypot(dx, dy)
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_w]:
+            self.move(dx, dy, self.speed)
+        if keys[pg.K_s]:
+            self.move(dx, dy, -self.speed)
+
+
+    def render(self):
+        self.display.blit(self.surf_copy, self.rect)
+        
 
 if __name__ == '__main__':
 
-    pg.init()  
-
-    ship_original = pg.image.load("Space shooter/imgs/tiny-spaceships/2X/tiny_ship15.png")
+    pg.init()
 
     screen = pg.display.set_mode([800]*2)
     clock = pg.time.Clock()
@@ -17,32 +123,28 @@ if __name__ == '__main__':
     bas_font = pg.font.Font(None, 30)
     x = y = 400
 
+    ship = Player((x, y))
+
     while run:
-        mx, my = pg.mouse.get_pos()
+        
         fps = clock.tick(60)/1000
         text_render = bas_font.render(f"FPS: {str(round(1/fps))}", True, (0, 127, 250))
         screen.fill("white")
         screen.blit(text_render, (0, 0))
-        dx = mx - x
-        dy = y - my
-        angle = math.atan2(dy, dx) * 180 / math.pi
-        ship = pg.transform.rotate(ship_original, angle - 90)
-        ship_rect = ship.get_rect(center=(x, y))
-        screen.blit(ship, ship_rect) 
+        
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 exit()
         
-        keys = pg.key.get_pressed()
-        if keys[pg.K_w]:
-            y -= 5
-        if keys[pg.K_s]:
-            y += 5
-        if keys[pg.K_a]:
-            x -= 5
-        if keys[pg.K_d]:
-            x += 5
+        ship.update()
+        ship.render()
+
+        
+        # if keys[pg.K_a]:
+        #     x -= 5
+        # if keys[pg.K_d]:
+        #     x += 5
         
         pg.display.update()
 

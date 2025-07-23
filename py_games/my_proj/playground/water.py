@@ -38,7 +38,7 @@ while True:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
-            exit("Thanks!!")
+            exit()
 
 
     key = pg.mouse.get_pressed()[0]

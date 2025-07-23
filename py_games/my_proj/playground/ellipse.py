@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
         # display.fill((10, 10, 10))
         coord_axis()
-        ellipse((origin_x, origin_y), 250, 250, angle)
+        ellipse((origin_x, origin_y), 500, 250, angle)
         angle += 0.01
         fps = clock.tick(60)
         pg.display.update()

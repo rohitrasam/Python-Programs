@@ -1,9 +1,9 @@
 
 def hello():
-    print("Hello")
+    return "Hello"
 
 di = {1: hello()}
 print("Initialzed di")
 
-di[1]
+print(di[1])
 print("Accessed di")

@@ -51,7 +51,7 @@ class Enemy(Entity):
     def health(self):
         ratio = self.hp / self.max_hp
         if ratio <= 0.3:
-            for _ in range(7):
+            for _ in range(2):
                 self.game.smoke.append(Smoke(self.game, randint(MIN_RAD, MAX_RAD), self.pos)) 
         if self.hp <= 0:
             self.explosion.play().set_volume(0.5)

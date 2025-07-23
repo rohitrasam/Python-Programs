@@ -1,8 +1,12 @@
 # Bi-section method
 from math import cos, exp, sin
 
+f = lambda x: x**3 - 8*x**2 + 17*x - 4
+# f = lambda x: x*exp(x) - 3.1*cos(x)
+# f = lambda x: 0.51*x-sin(x)
+# f = lambda x: cos(x) - 1.3*x
 # f = lambda x : x * exp(x) - 3.1 * cos(x) 
-f = lambda x : x**3 - x**2 - x - 1 
+# f = lambda x : x**3 - x**2 - x - 1 
 # f = lambda x : -0.9 * x**2 + 1.7 * x + 2.5
 
 if __name__ == '__main__':
