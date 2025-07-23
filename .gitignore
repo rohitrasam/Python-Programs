@@ -10,3 +10,7 @@ Images
 cards
 *.pdf
 .ipynb_checkpoints
+*.mp4
+*.csv
+*.xlsx
+*.wav
