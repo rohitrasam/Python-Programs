@@ -1,0 +1,9 @@
+1. Make it work.
+- visualize the problem as a tree.
+- implement that tree using recursion.
+- test it.
+
+2. Make it efficient.
+- add a memo object(dictionary, list, etc).
+- add base case to return memo values.
+- store return values into the memo.
